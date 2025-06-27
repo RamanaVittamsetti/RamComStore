@@ -1,0 +1,125 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _btnText = "Register";
+    string _h2Text = "Register";
+    if (Model.IsUpdateMode)
+    {
+        _btnText = "Update";
+        _h2Text = "Update";
+    }
+}
+<h2 class="mt-2">@_h2Text</h2>
+
+
+<hr />
+<div class="row">
+    <div class="col-md-10">
+        <form asp-action="Register" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="IsUpdateMode" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="UserName" class="control-label"></label>
+                @if (Model.IsUpdateMode)
+                {
+                    <input type="hidden" asp-for="UserName" />
+                    <input type="text" value="@Model.UserName" class="form-control" disabled />
+                }
+                else
+                {
+                    <input asp-for="UserName" class="form-control" />
+                }
+
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                @if (Model.IsUpdateMode)
+                {
+                    <input type="hidden" asp-for="Email" />
+                    <input type="text" value="@Model.Email" class="form-control" disabled />
+                }
+                else
+                {
+                    <input asp-for="Email" class="form-control" />
+                }
+
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            @if (Model.IsUpdateMode)
+            {
+                <div class="form-group">
+                    <label asp-for="CurrentPassword" class="control-label"></label>
+                    <input asp-for="CurrentPassword" class="form-control" />
+                    <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                </div>
+            }
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword" class="control-label"></label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Role" class="control-label"></label>
+                <select asp-for="Role" asp-items="Model.UserRoles" class="form-select">
+                    <option value="" selected> Select Role </option>
+                    </select>
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <input type="submit" value="@_btnText" class="btn btn-primary" />
+
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Register a custom adapter for 'requiredIf'
+        jQuery.validator.addMethod("requiredif", function (value, element, params) {
+            if(value != null && value !="") {
+                return true;
+            }
+          let dependentPropertyValue = $(params.conditionproperty).val();
+       return ! dependentPropertyValue == params.conditionvalue;
+        
+        });
+
+           // Register adapter for multiple parameters
+        jQuery.validator.unobtrusive.adapters.add("requiredif", ["conditionproperty", "conditionvalue"], function (options) {
+            options.rules["requiredif"] = {
+                conditionproperty: options.params.conditionproperty,
+                conditionvalue: options.params.conditionvalue
+            };
+            options.messages["requiredif"] = options.message;
+        });
+    </script>
+}

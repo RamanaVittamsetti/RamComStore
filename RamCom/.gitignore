@@ -1,0 +1,36 @@
+## Ignore build output
+bin/
+obj/
+out/
+*.dll
+*.exe
+
+## Ignore VS Code/Visual Studio settings
+.vscode/
+.vs/
+*.user
+*.suo
+
+## Ignore logs and temporary files
+*.log
+*.tmp
+
+## Ignore ASP.NET Core secrets and config
+appsettings.Development.json
+appsettings.Production.json
+secrets.json
+.env
+*.pfx
+*.key
+
+## Ignore publish output
+publish/
+*.db
+
+## Ignore migrations if desired
+# Migrations/
+
+## Ignore NuGet packages
+*.nupkg
+*.snupkg
+packages/
