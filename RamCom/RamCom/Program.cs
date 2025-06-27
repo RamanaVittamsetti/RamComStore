@@ -4,12 +4,15 @@ using Business.Interfaces;
 using Business.Models;
 using Business.SeedData;
 using DataAccess.EFContext;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using RamCom.Areas.Account.ModelBuilder;
 using RamCom.Interfaces;
 using Serilog;
 using Serilog.Events;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +27,29 @@ builder.Services.AddDbContext<ApplicationDBContext>(options => options.UseLazyLo
 //Register Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDBContext>().AddDefaultTokenProviders();
 
-builder.Services.ConfigureApplicationCookie(options=>
+//Use identity for mvc and Jwt for API
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+})
+// JWT Bearer Auth for API
+.AddJwtBearer("JwtBearer", options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
+//Configure cookie settings for identity mvc
+builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
     options.AccessDeniedPath = "/Account/AccessDenied";
@@ -71,6 +96,8 @@ builder.Services.AddDistributedSqlServerCache(options =>
 builder.Services.AddSingleton<IXmlCacheHelper, XMlCacheHelper>();
 builder.Services.AddScoped<IRegisterViewModelBuilder, RegisterViewModelBuilder>();
 
+
+
 var app = builder.Build();
 
 using(var scope = app.Services.CreateScope())
@@ -93,7 +120,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 

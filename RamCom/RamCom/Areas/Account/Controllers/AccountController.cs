@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using RamCom.Areas.Account.Models;
 using RamCom.Interfaces;
 using System.Runtime.CompilerServices;
-using Serilog;
 
 namespace RamCom.Areas.Account.Controllers
 {
@@ -46,7 +45,7 @@ namespace RamCom.Areas.Account.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    ModelState.AddModelError("validations_failed", "Invalid UserName or Password");
+                    ModelState.AddModelError("", "Invalid UserName or Password");
                     return View(model);
                 }
                 var user = await _userManager.FindByNameAsync(model.UserName);
@@ -58,17 +57,14 @@ namespace RamCom.Areas.Account.Controllers
                         return RedirectToAction("Index", "Home", new { area = "" });
                     }
                 }
-                else
-                {
-                    ModelState.AddModelError("invalid_credentials", "Invalid UserName or Password. Please try again.");
-                }
             }
             catch(Exception ex)
             {
-                ModelState.AddModelError("internal_error", "Internal error occurred while processing the request. Please try again.");
+                ModelState.AddModelError("", "Internal error occurred while processing the request. Please try again.");
                 _logger.LogError(ex, ex.Message);
             }
-               
+
+            ModelState.AddModelError("", "Invalid UserName or Password. Please try again.");
             return View(model);
 
         }

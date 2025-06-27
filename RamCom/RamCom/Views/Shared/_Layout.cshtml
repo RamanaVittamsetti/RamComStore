@@ -24,10 +24,16 @@
                                 <span class="visually-hidden">(current)</span>
                             </a>
                         </li>
-                        <li class="nav-item">
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-action="Index" asp-controller="ProductManagement">Manage Products</a>
+                            </li>
+                        }
+                        @* <li class="nav-item">
                             <a class="nav-link" href="#">Features</a>
-                        </li>
-                        <li class="nav-item">
+                        </li> *@
+                        @* <li class="nav-item">
                             <a class="nav-link" href="#">Pricing</a>
                         </li>
                         <li class="nav-item">
@@ -42,7 +48,7 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#">Separated link</a>
                             </div>
-                        </li>
+                        </li> *@
                     </ul>
                     <ul class="navbar-nav">
                         @if (User.Identity.IsAuthenticated)
@@ -51,7 +57,7 @@
                                 <a class="nav-link active" asp-action="UpdateDetails" asp-area="Account" asp-controller="Account"> Welcome @User.Identity.Name !</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-action="Logout" asp-area="Account" asp-controller="Account">Logout</a>
+                                <a class="nav-link" asp-action="SignOut" asp-area="Account" asp-controller="Account">Logout</a>
                             </li>
                         }
                         else
